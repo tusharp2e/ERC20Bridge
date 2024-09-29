@@ -1,0 +1,177 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x8E269f20783a16C250f92F974B12ED45EdB5e820",
+      "txHash": "0x77e22b2d1932d21265e92f6c7f4741604977cbc724f40bd607d251a4fd971726",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "0c99af603a9f0ac7379ebd297f8c5c6e9d7f401a0ad388f7272f617627ef7c24": {
+      "address": "0x8DDC2154D415A62Af3Ca3a135c181A1474C4321D",
+      "txHash": "0x204eb73a18084267ce5fc9400fc4403b82519dbdafb04700e09cfac5430be43b",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "currentChainId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "GiniBridgeProxy",
+            "src": "contracts/GiniBridgeProxy.sol:54"
+          },
+          {
+            "label": "totalLockedToken",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "GiniBridgeProxy",
+            "src": "contracts/GiniBridgeProxy.sol:55"
+          },
+          {
+            "label": "allocatedLockedToken",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "GiniBridgeProxy",
+            "src": "contracts/GiniBridgeProxy.sol:56"
+          },
+          {
+            "label": "giniTokenAddress",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_address",
+            "contract": "GiniBridgeProxy",
+            "src": "contracts/GiniBridgeProxy.sol:57"
+          },
+          {
+            "label": "unlockedTokens",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_address,t_struct(unlockedToken)1482_storage)",
+            "contract": "GiniBridgeProxy",
+            "src": "contracts/GiniBridgeProxy.sol:64"
+          },
+          {
+            "label": "admins",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "GiniBridgeProxy",
+            "src": "contracts/GiniBridgeProxy.sol:65"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)80_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(unlockedToken)1482_storage)": {
+            "label": "mapping(address => struct GiniBridgeProxy.unlockedToken)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(unlockedToken)1482_storage": {
+            "label": "struct GiniBridgeProxy.unlockedToken",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "status",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
