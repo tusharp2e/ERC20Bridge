@@ -4,30 +4,29 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-interface IERC20 {
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    function transfer(address to, uint256 value) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 value) external returns (bool);
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
-}
+contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
-contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+    /*
+     * Adding the methods from the OpenZeppelin's library which wraps around ERC20 operations that
+     * throw on failure to implement their safety.
+     */
+    using SafeERC20 for ERC20;
+
     /**
      * @notice Emitted when tokens are locked in the bridge contract to initiate a cross-chain transfer.
      * @param from The address of the sender locking the tokens.
      * @param to The address of the receiver on the destination chain, passed in string format.
      * @param amount The amount of tokens being locked.
      * @param currentChainId The chain ID of the network where tokens are being locked.
+     * @param nonce This is to have the number of transaction done to perform locking.
      *
      * This event signifies that the specified `amount` of tokens from the `from` address have been
      * locked in the bridge contract and are ready for cross-chain bridging to the `to` address.
      */
-    event BridgeLock(address from, string to, uint256 amount, uint256 currentChainId);
+    event BridgeToken(address from, string to, uint256 amount, uint256 currentChainId, uint256 nonce);
 
     /**
      * @notice Emitted when tokens are bridged to the destination chain and are available for the beneficiary.
@@ -38,7 +37,7 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
      * This event indicates that tokens are successfully bridged and available for withdrawal by the
      * beneficiary on the destination chain.
      */
-    event HandleTokenBridging(address to, uint256 amount, uint256 currentChainId);
+    event HandleBridgeToken(address to, uint256 amount, uint256 currentChainId);
 
     /**
      * @notice Emitted when the tokens are successfully withdrawn by the beneficiary on the destination chain.
@@ -51,6 +50,7 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
      */
     event WithdrawToken(address to, uint256 amount, uint256 currentChainId);
 
+    uint256 public nonce = 0; 
     uint256 public currentChainId;
     uint256 public totalLockedToken; 
     uint256 public allocatedLockedToken;
@@ -115,13 +115,14 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
      * - Updates the total amount of locked tokens.
      */
     function bridgeToken(string memory _receiverAddress, uint256 _amount) public {
-        IERC20 giniToken = IERC20(giniTokenAddress);
+        ERC20 giniToken = ERC20(giniTokenAddress);
         uint256 allowance = giniToken.allowance(msg.sender, address(this));
         require(allowance >= _amount, "Approval Not Done!");
         totalLockedToken = totalLockedToken + _amount ;
-        emit BridgeLock(msg.sender, _receiverAddress, _amount, currentChainId) ;
+        nonce = nonce + 1;
+        emit BridgeToken(msg.sender, _receiverAddress, _amount, currentChainId, nonce) ;
 
-        giniToken.transferFrom(msg.sender, address(this), _amount);
+        giniToken.safeTransferFrom(msg.sender, address(this), _amount);
     }
 
     /**
@@ -137,9 +138,9 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     * - If the receiver's tokens are already marked as "withdrawalReady", increase the amount.
     * - Otherwise, set the amount and mark the tokens' status as "withdrawalReady".
     * - Updates the total allocated locked tokens.
-    * - Emits a `HandleTokenBridging` event upon successful processing.
+    * - Emits a `handleBridgeToken` event upon successful processing.
     */
-    function handleTokenBridging(address _receiverAddress, uint256 _amount) onlyAdmin public {
+    function handleBridgeToken(address _receiverAddress, uint256 _amount) onlyAdmin public {
         if (keccak256(abi.encodePacked(unlockedTokens[_receiverAddress].status)) == keccak256(abi.encodePacked("withdrawalReady"))) {
             unlockedTokens[_receiverAddress].amount += _amount ;
         } else {
@@ -147,7 +148,7 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         }
         allocatedLockedToken = allocatedLockedToken + _amount;
 
-        emit HandleTokenBridging(_receiverAddress, _amount, currentChainId);
+        emit HandleBridgeToken(_receiverAddress, _amount, currentChainId);
     }
 
     /**
@@ -167,7 +168,7 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     function withdrawToken() public {
         require(keccak256(abi.encodePacked(unlockedTokens[msg.sender].status)) == keccak256(abi.encodePacked("withdrawalReady")) , "Can not withdraw!");
         require(unlockedTokens[msg.sender].amount >= 0, "No amount to withdraw!");
-        IERC20 giniToken = IERC20(giniTokenAddress);
+        ERC20 giniToken = ERC20(giniTokenAddress);
         uint256 amount = unlockedTokens[msg.sender].amount;
         allocatedLockedToken = allocatedLockedToken - amount ;
         totalLockedToken = totalLockedToken - amount ;
@@ -175,7 +176,7 @@ contract GiniBridgeProxy is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         unlockedTokens[msg.sender].amount = 0 ;
         emit WithdrawToken(msg.sender, amount, currentChainId) ;
 
-        giniToken.transfer(msg.sender, amount);
+        giniToken.safeTransfer(msg.sender, amount);
     }
 
     /**
