@@ -2,10 +2,11 @@ const { ethers, upgrades } = require("hardhat");
 
 async function main() {
   // Deploying the UUPS upgradeable contract
-  const ContractFactory = await ethers.getContractFactory("GiniBridgeProxy");
+  const ContractFactory = await ethers.getContractFactory("KalpBridge");
 
   console.log("Deploying UUPS Upgradeable Contract...");
-  const contract = await upgrades.deployProxy(ContractFactory, ["0x5FbDB2315678afecb367f032d93F642f64180aa3", 1]);
+  // Pass ERC20 Token address as first parameter 
+  const contract = await upgrades.deployProxy(ContractFactory, ["0x7E0a4b485aB538ED0dE3273B5bc5c81E8dfc6966", 1]);
 
   // Wait for contract to be deployed
    await contract.waitForDeployment();

@@ -5,6 +5,11 @@
       "address": "0x8E269f20783a16C250f92F974B12ED45EdB5e820",
       "txHash": "0x77e22b2d1932d21265e92f6c7f4741604977cbc724f40bd607d251a4fd971726",
       "kind": "uups"
+    },
+    {
+      "address": "0x17D445B01A835F624F87323cC026a5030AA00b8A",
+      "txHash": "0xfd05d79afb00f1c104f0adecd5123b5fe5efd4b34403530b608e135f7959a37d",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -120,6 +125,179 @@
           },
           "t_struct(unlockedToken)1482_storage": {
             "label": "struct GiniBridgeProxy.unlockedToken",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "status",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "cea1179d5ac873f7c19ae5152261eb40c263e360f679c74fd0fe240cd716a3e5": {
+      "address": "0x5e467b1aF7eB189B7c6D564E74Cc85F989064C13",
+      "txHash": "0x08f8df4889ed14acae97e719cb948687b584acf2fb22c8e21be99637c42b3e17",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "nonce",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:53"
+          },
+          {
+            "label": "currentChainId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:54"
+          },
+          {
+            "label": "totalLockedToken",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:55"
+          },
+          {
+            "label": "allocatedLockedToken",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:56"
+          },
+          {
+            "label": "giniTokenAddress",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:57"
+          },
+          {
+            "label": "unlockedTokens",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_struct(unlockedToken)2537_storage)",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:64"
+          },
+          {
+            "label": "admins",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "KalpBridge",
+            "src": "contracts/KalpBridge.sol:65"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)80_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(unlockedToken)2537_storage)": {
+            "label": "mapping(address => struct KalpBridge.unlockedToken)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(unlockedToken)2537_storage": {
+            "label": "struct KalpBridge.unlockedToken",
             "members": [
               {
                 "label": "amount",
