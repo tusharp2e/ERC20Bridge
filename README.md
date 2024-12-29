@@ -13,7 +13,7 @@ npx hardhat test // to  run tests
 
 ## Polygon testnet deployer 
 - Proxy 
-- Implementation  
+- Implementation:  
 
 ## Pending
 - Write the complete deployment script 
