@@ -52,8 +52,8 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
     uint256 public nonce; 
     uint256 public currentChainId;
-    uint256 public totalLockedToken; 
-    uint256 public allocatedLockedToken;
+    uint256 public totalLockedToken;    // Total tokens which are locked inside Kalp Bridge during BridgeToken.
+    uint256 public allocatedLockedToken;    // Total tokens which are still locked in Kalp Bridge but allocated to withdraw.  
     address giniTokenAddress; 
     
     struct unlockedToken {
@@ -61,7 +61,7 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         string status;
     }
 
-    mapping(address => unlockedToken) public unlockedTokens;
+    mapping(address => unlockedToken) public unlockedTokens;    // Tokens which are still locked in kalp bridge but to withdraw for specific user
     mapping(address => bool) public admins;
 
     modifier onlyAdmin(){
@@ -78,7 +78,6 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
      * @dev This function is called only once during the contract's initialization.
      *      It sets the Gini token address and the current chain ID.
      *      It also initializes the `Ownable` and `UUPSUpgradeable` contracts.
-     * @param _giniTokenAddress The address of the Gini token (ERC20) contract.
      * @param _currentChainId The ID of the blockchain network where this contract is deployed.
      *
      * Requirements:
@@ -86,12 +85,11 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
      * - Initializes the ownership of the contract using `__Ownable_init()`.
      * - Prepares the contract for upgradeability using `__UUPSUpgradeable_init()`.
      */
-    function initialize(address _giniTokenAddress, uint256 _currentChainId) public initializer {
+    function initialize(uint256 _currentChainId) public initializer {
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
         nonce = 0;
         currentChainId = _currentChainId;
-        giniTokenAddress = _giniTokenAddress;
     }
 
     function addAdmin(address _admin) onlyOwner public {
@@ -100,6 +98,11 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
     function removeAdmin(address _admin) onlyOwner public {
         admins[_admin] = false;
+    }
+
+    function setGiniToken(address _giniTokenAddress) public onlyAdmin {
+        require(giniTokenAddress == address(0), "Address is being set!");
+        giniTokenAddress = _giniTokenAddress;
     }
 
     /**

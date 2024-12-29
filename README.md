@@ -12,5 +12,10 @@ npx hardhat test // to  run tests
 ```
 
 ## Polygon testnet deployer 
-- Proxy 0x17D445B01A835F624F87323cC026a5030AA00b8A
-- Implementation  0x5e467b1aF7eB189B7c6D564E74Cc85F989064C13
+- Proxy 
+- Implementation  
+
+## Pending
+- Write the complete deployment script 
+- Write the test cases
+- Update the readme with the deployed addresses 
