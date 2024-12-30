@@ -61,8 +61,17 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         string status;
     }
 
-    mapping(address => unlockedToken) public unlockedTokens;    // Tokens which are still locked in kalp bridge but to withdraw for specific user
+    struct receivedTokensFrom {
+        string tokenReceivedFrom;
+        uint256 amount;
+        string txId;
+    }
+
     mapping(address => bool) public admins;
+    mapping(address => unlockedToken) public unlockedTokens;    // Tokens which are still locked in kalp bridge but to withdraw for specific user
+    mapping(address => receivedTokensFrom[]) public receivedTokensRecord;
+    mapping(string => bool) public txIdPresent; 
+    
 
     modifier onlyAdmin(){
         require(admins[msg.sender] == true, "Only Admin!");
@@ -89,6 +98,7 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
         nonce = 0;
+        totalLockedToken = 2000000000000000000000000000;
         currentChainId = _currentChainId;
     }
 
@@ -134,8 +144,10 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     * @dev This function checks the status of the tokens for the receiver. If the status is "withdrawalReady", 
     *      it increases the amount of tokens marked for withdrawal. Otherwise, it sets the amount and status.
     *      Only an admin can execute this function.
+    * @param _senderAddress The address of the user who has initiated the tokens bridiging on the source chain.
     * @param _receiverAddress The address of the user who will receive the tokens on the destination chain.
     * @param _amount The amount of tokens to be bridged and made ready for withdrawal.
+    * @param _txId TxId generated on source.
     * 
     * Requirements:
     * - The caller must have the "Admin" role.
@@ -144,7 +156,10 @@ contract KalpBridge is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     * - Updates the total allocated locked tokens.
     * - Emits a `handleBridgeToken` event upon successful processing.
     */
-    function handleBridgeToken(address _receiverAddress, uint256 _amount) onlyAdmin public {
+    function handleBridgeToken(string memory _senderAddress, address _receiverAddress, uint256 _amount, string memory _txId) onlyAdmin public {
+        require(!txIdPresent[_txId], "tx already received!");
+        txIdPresent[_txId] = true;
+        receivedTokensRecord[_receiverAddress].push(receivedTokensFrom({tokenReceivedFrom: _senderAddress, amount: _amount, txId: _txId}));
         if (keccak256(abi.encodePacked(unlockedTokens[_receiverAddress].status)) == keccak256(abi.encodePacked("withdrawalReady"))) {
             unlockedTokens[_receiverAddress].amount += _amount ;
         } else {
